@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>StudyBuddy — Syllabus-grounded tutoring</title>
+  <meta name="description" content="Ask anything about your course syllabus. Every answer cites the exact unit and document it comes from." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%235A4BD4'/%3E%3Cpath d='M5 9 L9 5 L13 9 L9 12 Z M13 9 L19 9 L23 12 L19 13 Z M15 26 L11 22 L7 26 L11 30 Z' fill='white'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lexend:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <div class="app">
+
+    <div class="scrim" id="scrim" hidden></div>
+
+    <!-- ======================= SIDEBAR ======================= -->
+    <aside class="sidebar" id="sidebar" aria-label="StudyBuddy navigation">
+      <div class="sidebar-top">
+        <a class="brand" href="/" aria-label="StudyBuddy home">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <span class="brand-name">StudyBuddy</span>
+        </a>
+        <button class="btn btn-primary btn-block" id="newChatBtn" type="button">
+          <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" d="M12 5 L12 19 M5 12 L19 12"/></svg>
+          New chat
+        </button>
+      </div>
+
+      <section class="nav-group" aria-labelledby="subjectsHeading">
+        <h2 class="nav-label" id="subjectsHeading">Subjects</h2>
+        <div class="subject-list" id="subjectList" role="list"></div>
+      </section>
+
+      <section class="nav-group" aria-labelledby="sessionsHeading">
+        <h2 class="nav-label" id="sessionsHeading">Recent chats</h2>
+        <div class="session-list" id="sessionList" role="list"></div>
+      </section>
+
+      <div class="sidebar-foot">
+        <div class="theme-toggle" role="group" aria-label="Colour theme">
+          <button class="icon-btn theme-opt is-active" id="themeLight" type="button" aria-label="Light theme" aria-pressed="true">
+            <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="5.5" fill="none" stroke="currentColor" stroke-width="2"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M4.5 7.5 H6 M7.4 4.5 L8.2 5.6 M9 3.2 L10.4 2.4 M10.4 2.4 l.6 1.2"/></svg>
+          </button>
+          <button class="icon-btn theme-opt" id="themeDark" type="button" aria-label="Dark theme" aria-pressed="false">
+            <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M5 7.5 Q9 5.5 8 4.2 T13 2.6 M13 2.6 Q15 5 14.4 6.4 Q16 5.8 16.8 8.4 M4 16 l4 -1 M8 15.6 l4 -1.2 M12 14.6 l3 -1"/></svg>
+          </button>
+        </div>
+        <div class="mode-badges" id="modeBadges" title="Active providers"></div>
+        <p class="foot-note">Every answer cites the syllabus unit it comes from. Questions outside the syllabus are flagged, never guessed.</p>
+      </div>
+    </aside>
+
+    <!-- ======================= MAIN ======================= -->
+    <div class="main">
+      <header class="topbar">
+        <button class="icon-btn" id="menuBtn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="sidebar">
+          <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" d="M4.5 6.5 H19.5 M4.5 12 H19.5 M4.5 17.5 H19.5"/></svg>
+        </button>
+        <div class="crumb" id="crumb">
+          <svg class="ic crumb-ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M12 4 Q16 9 13 14 L12 20 M6 17 L7 20 M4.5 9.5 L8.5 12.5 M4 14.5 L8 17"/></svg>
+          <span class="crumb-label" id="crumbLabel">Mathematics</span>
+        </div>
+        <span class="grounded-pill" id="groundedPill">
+          <span class="dot" aria-hidden="true"></span>
+          <span id="groundedText">Checking syllabus…</span>
+        </span>
+      </header>
+
+      <main class="thread" id="thread" role="log" aria-live="polite" aria-relevant="additions"></main>
+
+      <div class="statusline" id="statusline" hidden>
+        <span class="typing" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span id="statusText">Searching the syllabus…</span>
+      </div>
+
+      <footer class="composer" aria-label="Message composer">
+        <div class="composer-box">
+          <label class="visually-hidden" for="composerInput">Message StudyBuddy</label>
+          <textarea id="composerInput" rows="1" maxlength="4000" placeholder="Ask about anything in your syllabus…" aria-describedby="composerHint"></textarea>
+          <button class="send-btn" id="sendBtn" type="button" aria-label="Send message" disabled>
+            <span class="send-idle">
+              <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="M12 4.5 L12 12 M12 12 L20 15 M12 12 L5 15.5"/></svg>
+            </span>
+            <span class="send-busy" aria-hidden="true"></span>
+          </button>
+        </div>
+        <p class="composer-hint" id="composerHint">Enter to send · Shift+Enter for a new line · <kbd>/</kbd> to focus the composer</p>
+      </footer>
+    </div>
+  </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" hidden></div>
+
+  <template id="tplSubject"></template>
+  <template id="tplSession"></template>
+  <template id="tplSource"></template>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

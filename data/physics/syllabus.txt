@@ -1,0 +1,66 @@
+PHYSICS — SYLLABUS
+Grade 10 · Academic Track · Latest revision
+
+This document defines the units, learning objectives, and assessment focus for
+the Physics course. Laboratory work is assessed against these units, and written
+examinations always state the unit from which each question is drawn.
+
+Unit 1 — Measurements and Units
+Learning objectives: use the SI base units (metre, kilogram, second, ampere,
+kelvin, mole, candela); convert between prefixes (milli, centi, kilo, mega);
+estimate uncertainty and round to significant figures consistently.
+Key terms: precision, accuracy, uncertainty, significant figures, prefix.
+Example: 2.5 km = 2.5 x 10^3 m = 2500 m; a reading of 12.34 cm is good to four
+significant figures.
+Assessment focus: converting units, quoting answers to the correct number of
+significant figures, and choosing the right instrument for a measurement.
+
+Unit 2 — Kinematics
+Learning objectives: define displacement, velocity, acceleration; interpret
+position-time and velocity-time graphs; apply uniformly accelerated motion
+equations v = u + at, s = ut + 0.5at^2, and v^2 = u^2 + 2as.
+Key terms: displacement, speed, velocity, acceleration, uniform motion.
+Example: A car accelerates from rest at 2 m/s^2 for 5 s, so v = 0 + 2(5) = 10
+m/s and s = 0 + 0.5(2)(25) = 25 m.
+Assessment focus: reading gradients and areas off graphs, choosing the correct
+kinematics equation, and handling direction signs.
+
+Unit 3 — Laws of Motion
+Learning objectives: state Newton's three laws; apply F = ma to single objects
+and simple systems; understand inertia, mass versus weight, and action-reaction
+pairs; solve problems with friction as a constant resistive force.
+Key terms: inertia, mass, weight, net force, friction, reaction pair.
+Example: Weight = mass x gravitational field strength, W = mg, so a 50 kg
+student on Earth has weight W = 50 x 9.8 = 490 N.
+Assessment focus: drawing force diagrams, summing forces before applying
+F = ma, and stating which law explains a given everyday situation.
+
+Unit 4 — Work, Energy and Power
+Learning objectives: define work W = Fd cos(theta); distinguish kinetic energy
+KE = 0.5mv^2 and gravitational potential energy PE = mgh; state the work-energy
+principle; compute power P = W/t.
+Key terms: work, energy, power, kinetic, potential, conservation.
+Example: Lifting a 10 kg box 2 m gives it PE = 10 x 9.8 x 2 = 196 J of stored
+gravitational energy.
+Assessment focus: energy conservation in ramps and swings, work done by constant
+forces, and power values for everyday appliances.
+
+Unit 5 — Waves and Sound
+Learning objectives: describe transverse and longitudinal waves; relate
+wave speed v = f(lambda) to frequency and wavelength; describe reflection,
+refraction, and diffraction qualitatively; discuss hearing range and loudness.
+Key terms: amplitude, wavelength, frequency, period, medium, compression.
+Example: If a wave travels at 340 m/s with a frequency of 680 Hz, its
+wavelength is lambda = v/f = 340/680 = 0.5 m.
+Assessment focus: labelling wave diagrams, applying v = f(lambda), and explaining
+why sound needs a medium but light does not.
+
+Unit 6 — Electricity and Circuits
+Learning objectives: use Ohm's law V = IR; interpret series and parallel
+circuits; compute equivalent resistance; apply power P = VI and energy
+E = Pt; describe current, voltage, and resistance in words.
+Key terms: current, voltage, resistance, series, parallel, short circuit.
+Example: A 12 V battery drives 2 A through a lamp, so the lamp resistance is
+R = V/I = 12/2 = 6 ohms and its power is 24 W.
+Assessment focus: solving two-loop-ish series/parallel problems, safe-unit
+conversions, and predicting brightness changes when components are added.

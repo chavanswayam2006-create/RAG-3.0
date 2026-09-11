@@ -1,0 +1,71 @@
+# ============================================================================
+# StudyBuddy — syllabus-grounded RAG chatbot
+# Subjects are discovered from this registry. Each subject maps to a folder of
+# syllabus documents (PDF / DOCX / TXT / MD). Adding a subject = adding an
+# entry here + dropping files in a folder. No code changes required.
+# ============================================================================
+
+subjects:
+  math:
+    label: "Mathematics"
+    path: "data/math"
+    blurb: "Algebra · Geometry · Calculus"
+  physics:
+    label: "Physics"
+    path: "data/physics"
+    blurb: "Mechanics · Waves · Electricity"
+
+# ---------------------------------------------------------------------------
+# Embeddings — provider can be "openai" | "voyage" | "fake"
+#   fake   = deterministic hashed vectors (zero API cost, for offline dev/demo)
+#   openai = text-embedding-3-small (needs OPENAI_API_KEY in .env)
+#   voyage = voyage-3-large (needs VOYAGE_API_KEY in .env)
+# ---------------------------------------------------------------------------
+embedding:
+  provider: "openai"          # switch to "fake" for an offline demo run
+  model: "text-embedding-3-small"
+  voyage_model: "voyage-3-large"
+  dimensions: 1536            # must match the chosen model (text-embedding-3-small = 1536)
+
+# ---------------------------------------------------------------------------
+# Generation LLM — provider can be "anthropic" | "fake"
+#   fake = template answer built from the top retrieved chunk (offline demo)
+# ---------------------------------------------------------------------------
+llm:
+  provider: "anthropic"
+  model: "claude-sonnet-4-20250514"   # or claude-3-5-sonnet-latest, claude-opus-4-...
+  max_tokens: 1200
+  temperature: 0.2
+  # Optional: point to a .txt file to override the built-in runtime system prompt
+  system_prompt_file: ""
+
+# ---------------------------------------------------------------------------
+# Retrieval & chunking
+# min_relevance is a cosine-similarity threshold (0..1). If the best chunk for
+# the current subject scores below it, the bot answers with "not in syllabus"
+# instead of hallucinating from general knowledge.
+# ---------------------------------------------------------------------------
+retrieval:
+  top_k: 5
+  min_relevance: 0.35
+  chunk_tokens: 650           # ~500-800 target window
+  chunk_overlap: 0.15          # 15% overlap between adjacent chunks
+
+# ---------------------------------------------------------------------------
+# Vector store — backend can be "chroma" | "local"
+#   chroma = ChromaDB PersistentClient (auto-fallback to "local" if the
+#            chromadb package is not importable on this Python version)
+#   local  = dependency-free numpy brute-force store (fine for syllabus scale,
+#            ~10k chunks; swap to Pinecone/Qdrant/Weaviate for production)
+# The store is scoped by metadata (`subject_id`) so retrieval never leaks
+# across subjects.
+# ---------------------------------------------------------------------------
+vector_store:
+  backend: "chroma"
+  path: ".store"               # chroma: persistence dir; local: .store/local/
+  collection: "syllabus_chunks"
+
+# Conversation history persistence per session
+sessions:
+  path: "data/sessions"
+  max_turns: 20               # most recent N conversational turns sent to the LLM

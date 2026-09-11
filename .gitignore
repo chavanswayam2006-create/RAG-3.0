@@ -1,0 +1,20 @@
+# secrets
+.env
+
+# python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# vector store + runtime data
+.store/
+data/sessions/
+chroma/
+.chroma/
+
+# os / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

@@ -1,0 +1,1 @@
+"""StudyBuddy — syllabus-grounded RAG backend."""

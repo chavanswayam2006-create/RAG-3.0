@@ -1,0 +1,66 @@
+MATHEMATICS — SYLLABUS
+Grade 10 · Academic Track · Latest revision
+
+This document defines the units, learning objectives, and assessment focus for
+the Mathematics course. Questions in tests and examinations are drawn from the
+topics listed below. Students should be able to explain every bold concept in
+their own words and to solve at least one problem from each formula family.
+
+Unit 1 — Algebraic Expressions and Equations
+Learning objectives: simplify and factorise polynomial expressions; solve linear
+equations and inequalities; manipulate algebraic fractions; solve simultaneous
+linear equations in two unknowns (substitution and elimination methods).
+Key terms: coefficient, constant, like terms, identity, root, solution set.
+Example: Simplify 3(x - 2) + 4x(2x + 1) = 3x - 6 + 8x^2 + 4x = 8x^2 + 7x - 6.
+Assessment focus: expanding brackets, collecting like terms, factorising by
+common factor and by grouping, solving ax + b = c, and systems such as
+2x + y = 7 and x - 3y = -4.
+
+Unit 2 — Functions and Graphs
+Learning objectives: interpret function notation f(x); find domains and ranges;
+plot linear and quadratic functions; identify gradient and y-intercept from
+y = mx + c; understand the effect of c and m on a line.
+Key terms: domain, range, gradient, intercept, axis of symmetry, vertex.
+Example: For f(x) = 2x - 3, the gradient is 2 and the y-intercept is -3, so
+the graph rises 2 units for every 1 unit moved right.
+Assessment focus: reading values off graphs, sketching straight lines, and
+stating maximum/minimum points of simple quadratics.
+
+Unit 3 — Quadratic Equations
+Learning objectives: solve quadratic equations by factorisation, by completing
+the square, and with the quadratic formula x = (-b ± sqrt(b^2 - 4ac)) / (2a);
+interpret the discriminant b^2 - 4ac; link roots to the graph crossing the axis.
+Key terms: discriminant, roots, solutions, perfect square.
+Example: Solve x^2 - 5x + 6 = 0 by factorising to (x - 2)(x - 3) = 0, so the
+roots are x = 2 and x = 3.
+Assessment focus: applying the correct method, stating roots accurately, and
+explaining what a negative discriminant means for the graph.
+
+Unit 4 — Coordinate Geometry
+Learning objectives: use the distance formula, midpoint formula, and gradient
+formula between two points; find the equation of a line given two points or a
+point and gradient; recognise parallel and perpendicular lines by gradient.
+Key terms: midpoint, distance, perpendicular, parallel, equation of a line.
+Example: The midpoint of (1, 2) and (5, 6) is ((1+5)/2, (2+6)/2) = (3, 4).
+Assessment focus: manipulating coordinates without a calculator and justifying
+why two lines are parallel (equal gradients) or perpendicular (product is -1).
+
+Unit 5 — Sequences and Series
+Learning objectives: find the nth term of arithmetic and geometric sequences;
+compute partial sums of arithmetic series; recognise when a geometric series
+diverges or converges.
+Key terms: common difference, common ratio, term, sum, convergence.
+Example: 3, 7, 11, 15, ... is arithmetic with common difference 4 and nth term
+a_n = 3 + (n - 1) * 4 = 4n - 1.
+Assessment focus: writing the general term, using the sum formula
+S_n = (n/2)(a_1 + a_n), and explaining convergence tests in words.
+
+Unit 6 — Introduction to Calculus
+Learning objectives: understand limits informally; compute the derivative of
+polynomials using the power rule; interpret the derivative as the gradient of a
+tangent and as an instantaneous rate of change.
+Key terms: limit, derivative, tangent, rate of change, power rule.
+Example: If y = x^3 + 2x, then dy/dx = 3x^2 + 2, which gives the slope of the
+curve at any x.
+Assessment focus: differentiating simple polynomials, evaluating f'(a) at a
+point, and describing what the derivative tells us about a motion problem.
