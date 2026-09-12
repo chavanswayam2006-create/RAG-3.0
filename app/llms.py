@@ -1,4 +1,4 @@
-"""Generation LLM providers: anthropic (real) and fake (offline template)."""
+"""Generation LLM providers: openrouter + anthropic (real) and fake (offline template)."""
 from __future__ import annotations
 
 import os
@@ -33,6 +33,66 @@ class AnthropicLLM(LLM):
             messages=[{"role": "user", "content": user}],
         )
         return "".join(block.text for block in resp.content if getattr(block, "type", "") == "text")
+
+
+class OpenRouterLLM(LLM):
+    """Real generation via OpenRouter's OpenAI-compatible gateway.
+
+    One key unlocks hundreds of models (Anthropic, OpenAI, Google, …) through
+    a single endpoint — no per-provider keys needed. Does not require the
+    `anthropic` package; it reuses the `openai` SDK pointed at OpenRouter.
+    """
+
+    name = "openrouter"
+    BASE_URL = "https://openrouter.ai/api/v1"
+
+    def __init__(
+        self,
+        model: str = "nvidia/nemotron-3-super-120b-a12b:free",
+        *,
+        max_tokens: int = 1200,
+        temperature: float = 0.2,
+        api_key: str | None = None,
+    ) -> None:
+        from openai import OpenAI  # deferred import keeps startup cheap
+
+        api_key = api_key or os.getenv("OPENROUTER_API_KEY")
+        if not api_key:
+            raise RuntimeError("OPENROUTER_API_KEY missing (set it in .env)")
+        self.model = model
+        self.max_tokens = max_tokens
+        self.temperature = temperature
+        # `default_headers` is forwarded on every request — lets the app show
+        # up on the OpenRouter leaderboards and satisfies their ToS.
+        self._client = OpenAI(
+            base_url=self.BASE_URL,
+            api_key=api_key,
+            default_headers={
+                "HTTP-Referer": "http://localhost:8000",
+                "X-OpenRouter-Title": "StudyBuddy",
+            },
+        )
+
+    def generate(self, system: str, user: str, *, sources: list, subject_label: str) -> str:
+        try:
+            resp = self._client.chat.completions.create(
+                model=self.model,
+                max_tokens=self.max_tokens,
+                temperature=self.temperature,
+                messages=[
+                    {"role": "system", "content": system},
+                    {"role": "user", "content": user},
+                ],
+            )
+        except Exception as exc:  # noqa: BLE001 — give a friendly hint for free-tier keys
+            if "402" in str(exc):
+                raise RuntimeError(
+                    f"OpenRouter 402: model {self.model!r} needs credits. Either pick a ':free' "
+                    "model in config.yaml (e.g. google/gemma-4-31b-it:free) or add credits at "
+                    "https://openrouter.ai/settings/credits."
+                ) from exc
+            raise
+        return (resp.choices[0].message.content or "").strip()
 
 
 class FakeLLM(LLM):
@@ -80,6 +140,15 @@ class FakeLLM(LLM):
 def create_llm(settings) -> LLM:
     cfg = settings.llm
     provider = (cfg.get("provider") or "fake").lower()
+    if provider == "openrouter":
+        if not os.getenv("OPENROUTER_API_KEY"):
+            print("[llm] OPENROUTER_API_KEY not set — falling back to the demo 'fake' responder.")
+            return FakeLLM()
+        return OpenRouterLLM(
+            model=cfg.get("model", "nvidia/nemotron-3-super-120b-a12b:free"),
+            max_tokens=int(cfg.get("max_tokens", 1200)),
+            temperature=float(cfg.get("temperature", 0.2)),
+        )
     if provider == "anthropic":
         if not os.getenv("ANTHROPIC_API_KEY"):
             print("[llm] ANTHROPIC_API_KEY not set — falling back to the demo 'fake' responder.")

@@ -25,8 +25,8 @@ adding a folder of documents + one config entry. No code changes.**
 ## Quick start
 
 ```bash
-# 1. (optional) secrets — real answers need an Anthropic key
-copy .env.example .env        # then fill in ANTHROPIC_API_KEY etc.
+# 1. (optional) secrets — real answers need an OpenRouter key
+copy .env.example .env        # then fill in OPENROUTER_API_KEY (sk-or-v1-…)
 
 # 2. install
 pip install -r requirements.txt
@@ -69,9 +69,14 @@ llm:
   provider: "fake"        # template answer built from the top retrieved chunk
 ```
 
-Answers are clearly labelled as demo answers. Flip `provider` to `"openai"` /
-`"anthropic"` and add keys to `.env` for the real pipeline. You can also run the real
-embedders with the fake LLM or vice-versa — providers are independent.
+Answers are clearly labelled as demo answers. Flip `llm.provider` to `"openrouter"`
+with `embedding.provider: "fake"` to get **real LLM answers using only a single
+OpenRouter key** (OpenRouter has no embeddings API, so the offline embedder keeps the
+pipeline working with zero extra keys). Free-tier keys must use a `:free` model —
+`nvidia/nemotron-3-super-120b-a12b:free` is the default; paid models like
+`anthropic/claude-sonnet-4.6` need credits added at https://openrouter.ai/settings/credits.
+Or set `embedding.provider` to `"openai"` / `"voyage"` and add the matching key for real
+vectors too. Providers are independent — you can mix and match.
 
 ## Adding a subject
 
@@ -97,7 +102,7 @@ That's it — the frontend dropsheet and `/api/subjects` pick the new subject up
 |---|---|
 | `subjects` | subject id → label / folder / blurb registry |
 | `embedding.provider` | `openai` · `voyage` · `fake` |
-| `llm.provider` | `anthropic` · `fake` (modify `model` / `temperature`) |
+| `llm.provider` | `openrouter` (one key, any model) · `anthropic` · `fake` (modify `model` / `temperature`) |
 | `retrieval.top_k` | chunks fetched per question (default 5) |
 | `retrieval.min_relevance` | cosine threshold — below it → **"no syllabus match"**, no hallucination (0.35) |
 | `retrieval.chunk_tokens` / `chunk_overlap` | window size and overlap (650 tok / 15%) |
