@@ -1,7 +1,10 @@
 """Generation LLM providers: openrouter + anthropic (real) and fake (offline template)."""
 from __future__ import annotations
 
+import logging
 import os
+
+log = logging.getLogger("studybuddy.llm")
 
 
 class LLM:
@@ -41,6 +44,10 @@ class OpenRouterLLM(LLM):
     One key unlocks hundreds of models (Anthropic, OpenAI, Google, …) through
     a single endpoint — no per-provider keys needed. Does not require the
     `anthropic` package; it reuses the `openai` SDK pointed at OpenRouter.
+
+    Supports an optional fallback_model: if the primary model errors with a
+    transient failure (502/503/529 overloaded, timeout, etc.), the request is
+    retried once with the fallback model.
     """
 
     name = "openrouter"
@@ -50,6 +57,7 @@ class OpenRouterLLM(LLM):
         self,
         model: str = "nvidia/nemotron-3-super-120b-a12b:free",
         *,
+        fallback_model: str | None = None,
         max_tokens: int = 1200,
         temperature: float = 0.2,
         api_key: str | None = None,
@@ -60,6 +68,7 @@ class OpenRouterLLM(LLM):
         if not api_key:
             raise RuntimeError("OPENROUTER_API_KEY missing (set it in .env)")
         self.model = model
+        self.fallback_model = fallback_model
         self.max_tokens = max_tokens
         self.temperature = temperature
         # `default_headers` is forwarded on every request — lets the app show
@@ -73,26 +82,45 @@ class OpenRouterLLM(LLM):
             },
         )
 
+    @staticmethod
+    def _is_transient(exc: Exception) -> bool:
+        """Return True if the error is a transient/overloaded failure worth retrying."""
+        msg = str(exc)
+        for code in ("429", "502", "503", "529", "timeout", "overloaded", "rate"):
+            if code in msg.lower():
+                return True
+        return False
+
+    def _call(self, model: str, system: str, user: str) -> str:
+        resp = self._client.chat.completions.create(
+            model=model,
+            max_tokens=self.max_tokens,
+            temperature=self.temperature,
+            messages=[
+                {"role": "system", "content": system},
+                {"role": "user", "content": user},
+            ],
+        )
+        return (resp.choices[0].message.content or "").strip()
+
     def generate(self, system: str, user: str, *, sources: list, subject_label: str) -> str:
         try:
-            resp = self._client.chat.completions.create(
-                model=self.model,
-                max_tokens=self.max_tokens,
-                temperature=self.temperature,
-                messages=[
-                    {"role": "system", "content": system},
-                    {"role": "user", "content": user},
-                ],
-            )
-        except Exception as exc:  # noqa: BLE001 — give a friendly hint for free-tier keys
+            return self._call(self.model, system, user)
+        except Exception as exc:  # noqa: BLE001
             if "402" in str(exc):
                 raise RuntimeError(
                     f"OpenRouter 402: model {self.model!r} needs credits. Either pick a ':free' "
                     "model in config.yaml (e.g. google/gemma-4-31b-it:free) or add credits at "
                     "https://openrouter.ai/settings/credits."
                 ) from exc
+            # If there's a fallback model and the error is transient, retry once.
+            if self.fallback_model and self._is_transient(exc):
+                log.warning(
+                    "Primary model %s failed (%s), retrying with fallback %s",
+                    self.model, exc, self.fallback_model,
+                )
+                return self._call(self.fallback_model, system, user)
             raise
-        return (resp.choices[0].message.content or "").strip()
 
 
 class FakeLLM(LLM):
@@ -142,16 +170,17 @@ def create_llm(settings) -> LLM:
     provider = (cfg.get("provider") or "fake").lower()
     if provider == "openrouter":
         if not os.getenv("OPENROUTER_API_KEY"):
-            print("[llm] OPENROUTER_API_KEY not set — falling back to the demo 'fake' responder.")
+            log.warning("OPENROUTER_API_KEY not set — falling back to the demo 'fake' responder.")
             return FakeLLM()
         return OpenRouterLLM(
             model=cfg.get("model", "nvidia/nemotron-3-super-120b-a12b:free"),
+            fallback_model=cfg.get("fallback_model") or None,
             max_tokens=int(cfg.get("max_tokens", 1200)),
             temperature=float(cfg.get("temperature", 0.2)),
         )
     if provider == "anthropic":
         if not os.getenv("ANTHROPIC_API_KEY"):
-            print("[llm] ANTHROPIC_API_KEY not set — falling back to the demo 'fake' responder.")
+            log.warning("ANTHROPIC_API_KEY not set — falling back to the demo 'fake' responder.")
             return FakeLLM()
         return AnthropicLLM(
             model=cfg.get("model", "claude-sonnet-4-20250514"),
@@ -160,4 +189,4 @@ def create_llm(settings) -> LLM:
         )
     if provider == "fake":
         return FakeLLM()
-    raise ValueError(f"Unknown llm.provider: {provider!r} (anthropic | fake)")
+    raise ValueError(f"Unknown llm.provider: {provider!r} (openrouter | anthropic | fake)")

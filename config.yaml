@@ -44,6 +44,7 @@ llm:
   # openai/gpt-5, google/gemini-...) need credits at https://openrouter.ai/settings/credits
   # and will return HTTP 402 on a free-tier key.
   model: "nvidia/nemotron-3-super-120b-a12b:free"
+  fallback_model: "google/gemma-4-31b-it:free"
   max_tokens: 1200
   temperature: 0.2
   # Optional: point to a .txt file to override the built-in runtime system prompt
@@ -71,7 +72,7 @@ retrieval:
 # across subjects.
 # ---------------------------------------------------------------------------
 vector_store:
-  backend: "chroma"
+  backend: "local"
   path: ".store"               # chroma: persistence dir; local: .store/local/
   collection: "syllabus_chunks"
 
